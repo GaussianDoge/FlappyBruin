@@ -12,8 +12,9 @@ module render(
 
     
     logic clk_25MHz;
-    logic clk_420KHz;
-    clk_gen clk_generator(.clk_100MHz(clk_100MHz), .clk_25MHz(clk_25MHz), .clk_420KHz(clk_420KHz));
+    logic clk_60Hz;
+    logic clk_5Hz;
+    clk_gen clk_generator(.clk_100MHz(clk_100MHz), .clk_25MHz(clk_25MHz), .clk_60Hz(clk_60Hz), .clk_5Hz(clk_5Hz));
 	// ****************************************************************************************
 	
 
@@ -36,11 +37,13 @@ module render(
     logic [8:0] bruin_y;
     logic [4:0] bruin_high;
     logic [4:0] bruin_width;
+    logic bruin_over;
+    logic game_start = 1'b1;
 
     // Instantiate Bruin
-    bruin bruin_bird(.clk_100MHz(clk_100MHz), .clk_25MHz(clk_25MHz), .rst(reset), 
-                        .flap(flap), .bruin_color(bruin_color), .x(bruin_x), .y(bruin_y), 
-                        .high(bruin_high), .width(bruin_width));
+    bruin bruin_bird(.clk_100MHz(clk_100MHz), .clk_25MHz(clk_25MHz), .clk_60Hz(clk_60Hz), .clk_5Hz(clk_5Hz), 
+                        .rst(reset), .flap(flap), .game_start(game_start), .bruin_color(bruin_color), .x(bruin_x), .y(bruin_y), 
+                        .high(bruin_high), .width(bruin_width), .game_over(bruin_over));
     
     // Bar Operation
     logic [9:0] x_bar_arr[0:3];
