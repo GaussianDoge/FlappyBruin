@@ -2,6 +2,7 @@
 
 module rand_bar_gen(
     input logic clk_100MHz,
+    input logic clk_60Hz,
     input logic reset, 
     
     input logic [9:0] set_x,
@@ -10,6 +11,9 @@ module rand_bar_gen(
     output logic [8:0] y_gap
 );  
     logic [31:0] clk_cnt;
+    
+    
+    
     
     // Random Operations
     logic [8:0] random;
@@ -24,7 +28,7 @@ module rand_bar_gen(
         end
     end
     
-    always_ff @(posedge clk_100MHz or posedge reset) begin
+    always_ff @(posedge clk_60Hz or posedge reset) begin
         if (reset) begin   
             x_bar <= set_x; 
             y_gap <= 240; // y_gap sets to be in the middle

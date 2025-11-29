@@ -3,8 +3,8 @@
 module render(
 	input logic clk_100MHz,      // from FPGA
 	input logic reset,
+	input logic game_start,
 	input logic flap,
-	input logic [11:0] sw,       // 12 bits for color
 	output logic hsync, 
 	output logic vsync,
 	output logic [11:0] rgb      // 12 FPGA pins for RGB(4 per color) Green: [11:8]; Blue: [7:4]; Red: [3:0]
@@ -38,7 +38,6 @@ module render(
     logic [4:0] bruin_high;
     logic [4:0] bruin_width;
     logic bruin_over;
-    logic game_start = 1'b1;
 
     // Instantiate Bruin
     bruin bruin_bird(.clk_100MHz(clk_100MHz), .clk_25MHz(clk_25MHz), .clk_60Hz(clk_60Hz), .clk_5Hz(clk_5Hz), 
@@ -88,14 +87,31 @@ module render(
         .y_gap(y_gap_arr[3])
     );
     
+    logic [9:0] score = 10'd0;
+    logic        score_on;
+    logic [11:0] score_rgb;
+    
+    score_board #(
+        .SCALE(3)
+    ) sb_inst (
+        .x    (x),
+        .y    (y),
+        .score(score),
+        .on   (score_on),
+        .rgb  (score_rgb)
+    );
+    
+    
     
     // RGB Buffer
-    always @(posedge clk_100MHz or posedge reset) begin
+    always @(posedge clk_100MHz) begin
         if (reset)begin
            rgb_reg <= sky;
         end else begin
+           if (score_on) begin
+                rgb_reg <= score_rgb;
             // Rendering Bruin
-           if (x <= (bruin_x+bruin_width/2) && x >= (bruin_x-bruin_width/2)
+           end else if (x <= (bruin_x+bruin_width/2) && x >= (bruin_x-bruin_width/2)
                 && y <= (bruin_y+bruin_high/2) && y >= (bruin_y-bruin_high/2)) begin
                 rgb_reg <= bruin_color;
            end else begin
