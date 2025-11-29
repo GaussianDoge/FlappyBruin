@@ -30,8 +30,8 @@ module rand_bar_gen(
             clk_cnt <= 1'b0;
         end else begin
             clk_cnt <= clk_cnt + 1;
-            // go left once when clk_cnt reaches 50M, can change accordingly
-            if (clk_cnt == 50000000) begin
+            // go left once when clk_cnt reaches 10M, can change accordingly
+            if (clk_cnt == 10000000) begin
                 clk_cnt <= '0;
                 if (x_bar == 0) begin
                     x_bar <= set_x;

@@ -45,7 +45,7 @@ module render(
     // Bar Operation
     logic [9:0] x_bar_arr[0:3];
     logic [9:0] y_gap_arr[0:3];
-    logic [4:0] width_gap = 25;
+    logic [4:0] width_gap = 80;
     logic [5:0] bar_width = 40;
     logic [11:0] bar_color = 12'b000011110000;
    
@@ -99,7 +99,7 @@ module render(
                 // Rendering obstacles
                 for (logic [2:0] i = 0; i <= 3; i++) begin
                     if ((x > x_bar_arr[i]-bar_width && x < x_bar_arr[i])
-                        && (y < y_gap_arr[i]-width_gap/2 || y > y_gap_arr[i]+width_gap/2)) begin
+                        && (y < (y_gap_arr[i]-width_gap/2) || y > (y_gap_arr[i]+width_gap/2))) begin
                         rgb_reg <= bar_color;
                     end else begin
                         rgb_reg <= sky;
