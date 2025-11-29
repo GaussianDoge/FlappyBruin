@@ -44,7 +44,7 @@ module render(
     
     // Bar Operation
     logic [9:0] x_bar_arr[0:3];
-    logic [9:0] y_gap_arr[0:3];
+    logic [8:0] y_gap_arr[0:3];
     logic [4:0] width_gap = 80;
     logic [5:0] bar_width = 40;
     logic [11:0] bar_color = 12'b000011110000;
@@ -105,7 +105,7 @@ module render(
                         rgb_reg <= sky;
                     end
                 end
-           end
+            end
         end
     end
     

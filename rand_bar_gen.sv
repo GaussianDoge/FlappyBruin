@@ -7,18 +7,19 @@ module rand_bar_gen(
     input logic [9:0] set_x,
     
     output logic [9:0] x_bar,
-    output logic [9:0] y_gap
+    output logic [8:0] y_gap
 );  
     logic [31:0] clk_cnt;
     
     // Random Operations
-    logic [9:0] random;
+    logic [8:0] random;
     always_ff @(posedge clk_100MHz or posedge reset) begin
         if (reset) begin
             random <= 10'b1000000000;
         end else begin
             if (x_bar == 1) begin
-                random <= random[9] ^ random[8] ^ random[6] ^ random[4] ^ random[3];
+                automatic logic result = random[8] ^ random[7] ^ random[5] ^ random[3] ^ random[2];
+                random <= {random[7:0], result};
             end
         end
     end
