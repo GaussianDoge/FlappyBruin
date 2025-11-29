@@ -9,18 +9,11 @@ module render(
 	output logic vsync,
 	output logic [11:0] rgb      // 12 FPGA pins for RGB(4 per color) Green: [11:8]; Blue: [7:4]; Red: [3:0]
 );
-    // Generate 25Mhz clk(60hz) for vga_controller and other object's movement
-    logic clk_25MHz;
-    logic  [1:0] r_25MHz;
-    assign clk_25MHz = (r_25MHz == 0) ? 1 : 0; // assert tick 1/4 of the time
+
     
-    always_ff @(posedge clk_100MHz or posedge reset) begin
-		if(reset) begin
-		  r_25MHz <= 0;
-		end else begin
-		  r_25MHz <= r_25MHz + 1;
-		end
-	end
+    logic clk_25MHz;
+    logic clk_420KHz;
+    clk_gen clk_generator(.clk_100MHz(clk_100MHz), .clk_25MHz(clk_25MHz), .clk_420KHz(clk_420KHz));
 	// ****************************************************************************************
 	
 
@@ -45,18 +38,73 @@ module render(
     logic [4:0] bruin_width;
 
     // Instantiate Bruin
-    bruin bruin_bird(.clk_100MHz(clk_100MHz), .clk_25MHz(clk_25MHz), .rst(reset), .flap(flap), .bruin_color(bruin_color), .x(bruin_x), .y(bruin_y), .high(bruin_high), .width(bruin_width));
+    bruin bruin_bird(.clk_100MHz(clk_100MHz), .clk_25MHz(clk_25MHz), .rst(reset), 
+                        .flap(flap), .bruin_color(bruin_color), .x(bruin_x), .y(bruin_y), 
+                        .high(bruin_high), .width(bruin_width));
+    
+    // Bar Operation
+    logic [9:0] x_bar_arr[0:3];
+    logic [9:0] y_gap_arr[0:3];
+    logic [4:0] width_gap = 25;
+    logic [5:0] bar_width = 40;
+    logic [11:0] bar_color = 12'b000011110000;
+   
+    rand_bar_gen bar_1 (
+        .clk_100MHz(clk_100MHz),
+        .reset(reset),
+        
+        .set_x(640),
+        .x_bar(x_bar_arr[0]),
+        .y_gap(y_gap_arr[0])
+    );
+    
+    rand_bar_gen bar_2 (
+        .clk_100MHz(clk_100MHz),
+        .reset(reset),
+        
+        .set_x(560),
+        .x_bar(x_bar_arr[1]),
+        .y_gap(y_gap_arr[1])
+    );
+    
+    rand_bar_gen bar_3 (
+        .clk_100MHz(clk_100MHz),
+        .reset(reset),
+        
+        .set_x(480),
+        .x_bar(x_bar_arr[2]),
+        .y_gap(y_gap_arr[2])
+    );
+    
+    rand_bar_gen bar_4 (
+        .clk_100MHz(clk_100MHz),
+        .reset(reset),
+        
+        .set_x(420),
+        .x_bar(x_bar_arr[3]),
+        .y_gap(y_gap_arr[3])
+    );
+    
     
     // RGB Buffer
     always @(posedge clk_100MHz or posedge reset) begin
         if (reset)begin
            rgb_reg <= sky;
         end else begin
+            // Rendering Bruin
            if (x <= (bruin_x+bruin_width/2) && x >= (bruin_x-bruin_width/2)
                 && y <= (bruin_y+bruin_high/2) && y >= (bruin_y-bruin_high/2)) begin
                 rgb_reg <= bruin_color;
            end else begin
-                rgb_reg <= sky;
+                // Rendering obstacles
+                for (logic [2:0] i = 0; i <= 3; i++) begin
+                    if ((x > x_bar_arr[i]-bar_width && x < x_bar_arr[i])
+                        && (y < y_gap_arr[i]-width_gap/2 || y > y_gap_arr[i]+width_gap/2)) begin
+                        rgb_reg <= bar_color;
+                    end else begin
+                        rgb_reg <= sky;
+                    end
+                end
            end
         end
     end
