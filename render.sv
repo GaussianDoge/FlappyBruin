@@ -49,11 +49,13 @@ module render(
     logic [8:0] y_gap_arr[0:3];
     logic [4:0] width_gap = 80;
     logic [5:0] bar_width = 40;
-    logic [11:0] bar_color = 12'b000011110000;
+    logic [11:0] bar_color = 12'b0000_1111_0000;
    
     rand_bar_gen bar_1 (
         .clk_100MHz(clk_100MHz),
+        .clk_60Hz(clk_60Hz),
         .reset(reset),
+        .game_start(game_start),
         
         .set_x(640),
         .x_bar(x_bar_arr[0]),
@@ -62,7 +64,9 @@ module render(
     
     rand_bar_gen bar_2 (
         .clk_100MHz(clk_100MHz),
+        .clk_60Hz(clk_60Hz),
         .reset(reset),
+        .game_start(game_start),
         
         .set_x(560),
         .x_bar(x_bar_arr[1]),
@@ -71,7 +75,9 @@ module render(
     
     rand_bar_gen bar_3 (
         .clk_100MHz(clk_100MHz),
+        .clk_60Hz(clk_60Hz),
         .reset(reset),
+        .game_start(game_start),
         
         .set_x(480),
         .x_bar(x_bar_arr[2]),
@@ -80,7 +86,9 @@ module render(
     
     rand_bar_gen bar_4 (
         .clk_100MHz(clk_100MHz),
+        .clk_60Hz(clk_60Hz),
         .reset(reset),
+        .game_start(game_start),
         
         .set_x(420),
         .x_bar(x_bar_arr[3]),

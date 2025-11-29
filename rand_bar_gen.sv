@@ -3,7 +3,8 @@
 module rand_bar_gen(
     input logic clk_100MHz,
     input logic clk_60Hz,
-    input logic reset, 
+    input logic reset,
+    input logic game_start,
     
     input logic [9:0] set_x,
     
@@ -20,7 +21,7 @@ module rand_bar_gen(
     always_ff @(posedge clk_100MHz or posedge reset) begin
         if (reset) begin
             random <= 10'b1000000000;
-        end else begin
+        end else if(game_start) begin
             if (x_bar == 1) begin
                 automatic logic result = random[8] ^ random[7] ^ random[5] ^ random[3] ^ random[2];
                 random <= {random[7:0], result};
@@ -28,12 +29,12 @@ module rand_bar_gen(
         end
     end
     
-    always_ff @(posedge clk_60Hz or posedge reset) begin
+    always_ff @(posedge clk_100MHz or posedge reset) begin
         if (reset) begin   
             x_bar <= set_x; 
             y_gap <= 240; // y_gap sets to be in the middle
             clk_cnt <= 1'b0;
-        end else begin
+        end else if(game_start) begin
             clk_cnt <= clk_cnt + 1;
             // go left once when clk_cnt reaches 10M, can change accordingly
             if (clk_cnt == 10000000) begin

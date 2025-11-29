@@ -177,7 +177,7 @@ module score_board #(
                     3'd0: font_row = 8'b00000000;
                     3'd1: font_row = 8'b00000000;
                     3'd2: font_row = 8'b01111100;
-                    3'd3: font_row = 8'b10100010;
+                    3'd3: font_row = 8'b00100010;
                     3'd4: font_row = 8'b00100000;
                     3'd5: font_row = 8'b00100000;
                     3'd6: font_row = 8'b00000000;

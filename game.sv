@@ -9,7 +9,7 @@ module game(
 	output logic [11:0] rgb
     );
     
-    logic game_start;
+    logic game_start = 1'b0;
     
     render rendering(.clk_100MHz(clk_100MHz), .reset(reset), .game_start(game_start), .flap(flap), .hsync(hsync), .vsync(vsync), .rgb(rgb));
     
@@ -17,7 +17,7 @@ module game(
         if (reset) begin
             game_start <= 1'b0;
         end else begin
-            if (flap) begin
+            if (flap && !game_start) begin
                 game_start <= 1'b1;
             end
         end

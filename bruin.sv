@@ -90,6 +90,8 @@ module bruin(
                 falling_count <= falling_count + falling_rate;
             end else if (y <= max_high) begin
                 y <= max_high;
+            end else begin
+                
             end
         end
     end
