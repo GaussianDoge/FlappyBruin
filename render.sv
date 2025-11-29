@@ -43,7 +43,7 @@ module render(
     logic [8:0] bruin_y;
     logic [4:0] bruin_high;
     logic [4:0] bruin_width;
-      
+
     // Instantiate Bruin
     bruin bruin_bird(.clk_100MHz(clk_100MHz), .clk_25MHz(clk_25MHz), .rst(reset), .flap(flap), .bruin_color(bruin_color), .x(bruin_x), .y(bruin_y), .high(bruin_high), .width(bruin_width));
     
