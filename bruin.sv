@@ -13,17 +13,18 @@ module bruin(
     output logic [8:0] y,
     output logic [4:0] high,
     output logic [4:0] width,
-    output logic game_over
+    output logic game_over,
+    input logic lose
     );
     
     assign high = 5'd20;
     assign width = 5'd20;
    
     logic [8:0] y_0 = 9'd240; // 240
-    logic [8:0] flap_speed = 9'd60; // Every flap, move up 30 pixel in 30 frames (game is 60 FPS, so half second)
-    logic [8:0] flap_rate = 9'd6; // move up 6 pixel
-    logic [8:0] falling_rate = 9'd2;
-    logic [8:0] falling_speed = 9'd30;
+    logic [8:0] flap_speed = 9'd80; // Every flap, move up 30 pixel in 30 frames (game is 60 FPS, so half second)
+    logic [8:0] flap_rate = 9'd8; // move up 6 pixel
+    logic [8:0] falling_rate = 9'd4;
+    logic [8:0] falling_speed = 9'd40;
     logic [8:0] max_high = 9'd10; // 20/2=10
     logic [8:0] min_high = 9'd470; // 480 - 10 = 470
     assign x = 9'd200; // 200
@@ -63,35 +64,37 @@ module bruin(
             flap_state_pre <= 1'b1;
             game_over <= 1'b0;
         end else if (game_start) begin
-            if (flap_rise && flap_state_pre == 1 && flap_state_cur == 0) begin
-                flap_state_cur <= 1'b1;
-                flap_state_pre <= 1'b0;
-                flap_count <= 9'b0;
-            end else if(!flap_rise && flap_state_pre == 0 && flap_state_cur == 1) begin
-                flap_state_cur <= 1'b0;
-                flap_state_pre <= 1'b1;
-            end
-            
-            if (!falling_d) begin
-                falling_count <= 9'b0;
-            end else begin
-                falling_d <= falling_d + 1;
-            end
-            
-            
-            if (flap_rise && y - flap_rate >= max_high && flap_count < flap_speed) begin // Flap
-                y <= y - flap_rate;
-                flap_count <= flap_count + flap_rate;
-            end else if (y >= min_high) begin
-                y <= min_high;
-                game_over <= 1'b1;
-            end else if (falling_count < falling_speed) begin
-                y <= y + falling_rate;
-                falling_count <= falling_count + falling_rate;
-            end else if (y <= max_high) begin
-                y <= max_high;
-            end else begin
+            if (!lose) begin
+                if (flap_rise && flap_state_pre == 1 && flap_state_cur == 0) begin
+                    flap_state_cur <= 1'b1;
+                    flap_state_pre <= 1'b0;
+                    flap_count <= 9'b0;
+                end else if(!flap_rise && flap_state_pre == 0 && flap_state_cur == 1) begin
+                    flap_state_cur <= 1'b0;
+                    flap_state_pre <= 1'b1;
+                end
                 
+                if (!falling_d) begin
+                    falling_count <= 9'b0;
+                end else begin
+                    falling_d <= falling_d + 1;
+                end
+                
+                
+                if (flap_rise && y - flap_rate >= max_high && flap_count < flap_speed) begin // Flap
+                    y <= y - flap_rate;
+                    flap_count <= flap_count + flap_rate;
+                end else if (y >= min_high) begin
+                    y <= min_high;
+                    game_over <= 1'b1;
+                end else if (falling_count < falling_speed) begin
+                    y <= y + falling_rate;
+                    falling_count <= falling_count + falling_rate;
+                end else if (y <= max_high) begin
+                    y <= max_high;
+                end else begin
+                    
+                end
             end
         end
     end
